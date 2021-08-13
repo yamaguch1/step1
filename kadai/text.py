@@ -18,8 +18,15 @@ for name in names:
     print(name)
 # 以下のようにhikisuuの部分が引数です。引数は関数の外から変数を関数内に渡すことができます。
 def test(hiki):
-    result = 'ぎゆう' in names
+    result = hiki in names
     if result == True:
-        print(hiki + 'は含まれます')
+        print(f"{hiki} は含まれます")
 test('ぎゆう')
 
+def test2(hiki):
+    if hiki in names:
+        print("OK")
+    else:
+        print(hiki + "" "No")
+
+test2("ぎゆう")

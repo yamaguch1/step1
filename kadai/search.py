@@ -29,7 +29,7 @@ def search():
             is_add=input("追加しますか？(n:しない y:する)>> ")
             if is_add == "y":
                 source.append(word)
-        write_source(SOURCE_CSV_PATH, source=source)
+        write_source(SOURCE_CSV_PATH, [word])
 
 if __name__ == "__main__":
     search()
