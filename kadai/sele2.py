@@ -10,8 +10,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 #変わらないパス、ログファイルパス。基本は相対パスで書かないとほかのPCで見れない場合がある
-LEG_FILE_PATH = "./log/log_(datetime).log"
-EXP_CSV_PATH = "./exp_list_(search_keyword)_(datetime).csv"
+LEG_FILE_PATH = "C:\\Users\\81904\\prject1\\kadai\\log\\log_(datetime).log"
+EXP_CSV_PATH = "C:\\Users\\81904\\prject1\\kadai\\exp_list_(search_keyword)_(datetime).csv"
 log_file_path = LEG_FILE_PATH.format(datetime=datetime.datetime.now().strftime('%Y-%m-%d-%M-%S'))
 
 # Chromeを起動する関数
@@ -42,10 +42,11 @@ def log(txt):
     now = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     logStr = '[%s: %s] %s' %('log',now,txt)
     #ログ出力
-    with open(log_file_path, 'a', encoding='utf-8_sig') as f:
-        f.write(logStr + '\n')
+    print(log_file_path)
+    print(now)
     print(logStr)
-
+    with open(log_file_path, 'w', encoding='utf-8_sig') as f:
+        f.write(logStr + '\n')
 
 def find_table_target_word(th_elms, td_elms, target:str):
     #tableのthからtargetの文字列を探し一致するのをtdを返す
@@ -106,8 +107,8 @@ def main():
                 exp_copy_list.append(copy.text)
                 exp_status_list.append(status.text)
                 #初年度年数をtableから探す
-                first_year_fee = find_table_target_word(table.find_elements_by_tag_name("th"), table.find_elements_by_tag_name)
-                exp_first_year_fee_list.append(first_year_fee)
+                first_year_fee = find_table_target_word(table.find_elements_by_tag_name("th"), table.find_elements_by_tag_name("td"), "初年度年収")
+                exp_first_year_free_list.append(first_year_fee)
                 log(f"{count}件目成功 : {name.text}")
                 success+=1
             except Exception as e:
@@ -133,7 +134,7 @@ def main():
     df = pd.DataFrame({"会社名": exp_name_list, 
                     "キャチコピー": exp_copy_list,
                     "ステータス": exp_status_list,
-                    "初年度年収":　exp_first_year_fee_list})
+                    "初年度年収": exp_first_year_free_list})
     #csv出力
     df.to_csv(EXP_CSV_PATH.format(search_keyword=search_keyword,datetime=now),encoding="utf-8-sig")
 
