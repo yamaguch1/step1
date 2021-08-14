@@ -14,12 +14,9 @@ EXP_CSV_PATH="./exp_list_{search_keyword}_{datetime}.csv"
 log_file_path=LOG_FILE_PATH.format(datetime=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
 
 
-### Chromeを起動する関数
 def set_driver(driver_path, headless_flg):
     # Chromeドライバーの読み込み
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("excludeSwitches", ['enable-automation'])
-
+    options = ChromeOptions()
 
     # ヘッドレスモード（画面非表示モード）をの設定
     if headless_flg == True:
@@ -35,7 +32,7 @@ def set_driver(driver_path, headless_flg):
 
     # ChromeのWebDriverオブジェクトを作成する。
     return Chrome(ChromeDriverManager().install(), options=options)
-
+    
 ### ログファイルおよびコンソール出力
 def log1(txt):
     now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
@@ -59,7 +56,7 @@ def main():
     # driverを起動
     driver = set_driver("chromedriver.exe", False)
     # Webサイトを開く
-    driver.get("https://site0.sbisec.co.jp/marble/fund/powersearch/fundpsearch.do?")
+    driver.get("https://www.sbisec.co.jp/ETGate/?_ControlID=WPLEThmR001Control&_PageID=DefaultPID&_DataStoreID=DSWPLEThmR001Control&_ActionID=DefaultAID&getFlg=on")
     time.sleep(5)
     try:
         # ポップアップを閉じる（seleniumだけではクローズできない）
