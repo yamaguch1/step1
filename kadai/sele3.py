@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from webdriver_manager.chrome import ChromeDriverManager
 
+
 LOG_FILE_PATH = "./log1/log_{datetime}.log"
 EXP_CSV_PATH="./exp_list_{search_keyword}_{datetime}.csv"
 log_file_path=LOG_FILE_PATH.format(datetime=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))

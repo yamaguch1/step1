@@ -19,8 +19,8 @@ def set_driver(driver_path, headless_flg):
     options = ChromeOptions()
 
     # ヘッドレスモード（画面非表示モード）をの設定
-    if headless_flg == True:
-        options.add_argument('--headless')
+    # if headless_flg == True:
+    #     options.add_argument('--headless')
 
     # 起動オプションの設定
     options.add_argument(
@@ -34,7 +34,7 @@ def set_driver(driver_path, headless_flg):
     return Chrome(ChromeDriverManager().install(), options=options)
     
 ### ログファイルおよびコンソール出力
-def log1(txt):
+def log(txt):
     now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     logStr = '[%s: %s] %s' % ('log1',now , txt)
     # ログ出力
@@ -50,9 +50,9 @@ def find_table_target_word(th_elms, td_elms, target:str):
 
 ### main処理
 def main():
-    log1("処理開始")
+    log("処理開始")
     search_keyword=input("検索キーワードを入力してください：")
-    log1("検索キーワード:{}".format(search_keyword))
+    log("検索キーワード:{}".format(search_keyword))
     # driverを起動
     driver = set_driver("chromedriver.exe", False)
     # Webサイトを開く
@@ -60,17 +60,17 @@ def main():
     time.sleep(5)
     try:
         # ポップアップを閉じる（seleniumだけではクローズできない）
-        # driver.execute_script('document.querySelector(".karte-close").click()')
-        # time.sleep(5)
+        driver.execute_script('document.querySelector(".karte-close").click()')
+        time.sleep(5)
         # ポップアップを閉じる
         driver.execute_script('document.querySelector(".karte-close").click()')
     except:
         pass
 
     # 検索窓に入力
-    driver.find_element_by_class_name(".fundNameInput").send_keys(search_keyword)
+    driver.find_element_by_class_name(".top_stock_sec").send_keys(search_keyword)
     # 検索ボタンクリック
-    driver.find_element_by_class_name(".fundNameSearch .img").click()
+    driver.find_element_by_class_name(".srchK .a .img").click()
 
     # ページ終了まで繰り返し取得
     exp_name_list = []
@@ -103,11 +103,11 @@ def main():
                 comparison = find_table_target_word(comparison.find_elements_by_tag_name("th"), comparison.find_elements_by_tag_name("td"), "前日比")
                 exp_comparison_list.append(comparison)
 
-                log1(f"{count}件目成功 : {name}.text")
+                log(f"{count}件目成功 : {name}.text")
                 success+=1
             except Exception as e:
-                log1(f"{count}件目失敗 : {name}.text")
-                log1(e)
+                log(f"{count}件目失敗 : {name}.text")
+                log(e)
                 fail+=1
             finally:
                 # finallyは成功でもエラーでも必ず実行
@@ -119,7 +119,7 @@ def main():
             next_page_link = next_page[0].get_attribute("href")
             driver.get(next_page_link)
         else:
-            log1("最終ページです。終了します。")
+            log("最終ページです。終了します。")
             break
 
     # CSV出力
@@ -130,7 +130,7 @@ def main():
                        "前日比":exp_comparison_list})
     df.to_csv(EXP_CSV_PATH.format(search_keyword=search_keyword,datetime=
                                   now), encoding="utf-8-sig")
-    log1(f"処理完了 成功件数: {success} 件 / 失敗件数: {fail} 件")
+    log(f"処理完了 成功件数: {success} 件 / 失敗件数: {fail} 件")
     
 # 直接起動された場合はmain()を起動(モジュールとして呼び出された場合は起動しないようにするため)
 if __name__ == "__main__":
