@@ -1,4 +1,3 @@
-#永遠出てくる
 import os
 from selenium.webdriver import Chrome, ChromeOptions
 import time
@@ -12,6 +11,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 LOG_FILE_PATH = "./log1/log_{datetime}.log"
 EXP_CSV_PATH="./exp_list_{search_keyword}_{datetime}.csv"
 log_file_path=LOG_FILE_PATH.format(datetime=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+
+USERNAME = 'l_e_m_o_n_o_h_a'
+PASSWORD = 'lemo2727'
 
 ### Chromeを起動する関数
 def set_driver(driver_path, headless_flg):
@@ -48,29 +50,56 @@ def find_table_target_word(th_elms, td_elms, target:str):
         if th_elm.text == target:
             return td_elm.text
 
+
 ### main処理
 def main():
-    log("処理開始")
-    search_keyword=input("検索キーワードを入力してください：")
-    log("検索キーワード:{}".format(search_keyword))
+    # log("処理開始")
+    # search_keyword=input("検索キーワードを入力してください：")
+    # log("検索キーワード:{}".format(search_keyword))
     # driverを起動
     driver = set_driver("chromedriver.exe", False)
     # Webサイトを開く
-    driver.get("https://tenshoku.mynavi.jp/")
+    driver.get("https://www.instagram.com/")
     time.sleep(5)
     try:
-        # ポップアップを閉じる（seleniumだけではクローズできない）
-        driver.execute_script('document.querySelector(".karte-close").click()')
-        time.sleep(5)
-        # ポップアップを閉じる
-        driver.execute_script('document.querySelector(".karte-close").click()')
-    except:
-        pass
+        login_button = driver.find_element_by_link_text('ログインする')
+        login_button.click()
+        time.sleep(3)
+    except Exception:
+        error_flg = True
+        print('ログインボタン押下時にエラーが発生しました。')
 
-    # 検索窓に入力
-    driver.find_element_by_class_name("topSearch__text").send_keys(search_keyword)
-    # 検索ボタンクリック
-    driver.find_element_by_class_name("topSearch__button").click()
+    # try:
+    #     # ポップアップを閉じる（seleniumだけではクローズできない）
+    #     driver.execute_script('document.querySelector(".karte-close").click()')
+    #     time.sleep(5)
+    #     # ポップアップを閉じる
+    #     driver.execute_script('document.querySelector(".karte-close").click()')
+    # except:
+    #     pass
+
+        if error_flg is False:
+            try:
+                username_input = driver.find_element_by_xpath('//input[@aria-label="電話番号、ユーザーネーム、メールアドレス"]')
+                username_input.send_keys(USERNAME)
+                time.sleep(1)
+        
+                password_input = driver.find_element_by_xpath('//input[@aria-label="パスワード"]')
+                password_input.send_keys(PASSWORD)
+                time.sleep(1)
+        
+                username_input.submit()
+                time.sleep(1)
+                
+            except Exception:
+                print('ユーザー名、パスワード入力時にエラーが発生しました。')
+                error_flg = True
+    # # 検索窓に入力
+    # driver.find_element_by_css_selector("loginForm.div.div:nth-child(1).div.label.input").send_keys(search_keyword)#loginForm.div.div:nth-child(1).div.label.input
+    # driver.find_element_by_css_selector("loginForm.div.div:nth-child(2).div.label.input").send_keys(search_keyword)#loginForm.div.div:nth-child(2).div.label.input
+    
+    # # 検索ボタンクリック
+    # driver.find_element_by_css_selector("srchK.a").click()
 
     # ページ終了まで繰り返し取得
     exp_name_list = []

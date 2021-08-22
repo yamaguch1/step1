@@ -1,4 +1,5 @@
-#解決例
+#解決例 成功0件になる
+
 import os
 from selenium.webdriver import Chrome, ChromeOptions
 import time

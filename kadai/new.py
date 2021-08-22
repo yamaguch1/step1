@@ -1,4 +1,4 @@
-#永遠出てくる
+#途中
 import os
 from selenium.webdriver import Chrome, ChromeOptions
 import time
@@ -33,6 +33,7 @@ def set_driver(driver_path, headless_flg):
     # ChromeのWebDriverオブジェクトを作成する。
     return Chrome(ChromeDriverManager().install(), options=options)
 
+
 ### ログファイルおよびコンソール出力
 def log(txt):
     now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
@@ -50,14 +51,11 @@ def find_table_target_word(th_elms, td_elms, target:str):
 
 ### main処理
 def main():
-    log("処理開始")
-    search_keyword=input("検索キーワードを入力してください：")
-    log("検索キーワード:{}".format(search_keyword))
-    # driverを起動
     driver = set_driver("chromedriver.exe", False)
-    # Webサイトを開く
-    driver.get("https://tenshoku.mynavi.jp/")
-    time.sleep(5)
+    driver.get("https://www.sbisec.co.jp/ETGate/?_ControlID=WPLEThmR001Control&_PageID=DefaultPID&_DataStoreID=DSWPLEThmR001Control&_ActionID=DefaultAID&getFlg=on")
+    driver.find_element_by_id("top_stock_sec").send_keys("アフリカ")
+    driver.find_element_by_css_selector("[title='株価検索']").click()
+    time.sleep(10)
     try:
         # ポップアップを閉じる（seleniumだけではクローズできない）
         driver.execute_script('document.querySelector(".karte-close").click()')
@@ -66,11 +64,6 @@ def main():
         driver.execute_script('document.querySelector(".karte-close").click()')
     except:
         pass
-
-    # 検索窓に入力
-    driver.find_element_by_class_name("topSearch__text").send_keys(search_keyword)
-    # 検索ボタンクリック
-    driver.find_element_by_class_name("topSearch__button").click()
 
     # ページ終了まで繰り返し取得
     exp_name_list = []

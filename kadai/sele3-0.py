@@ -1,3 +1,5 @@
+#あきらめ
+
 import os
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver import Firefox
