@@ -13,13 +13,16 @@ LOG_FILE_PATH = "./log1/log_{datetime}.log"
 EXP_CSV_PATH="./exp_list_{search_keyword}_{datetime}.csv"
 log_file_path=LOG_FILE_PATH.format(datetime=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
 
+#ユーザーエージェントといわれるもので、ブラウザの種類やバージョンをサイトに通知するためのもの
+HEADER_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
+
 ### Chromeを起動する関数
-def set_driver(driver_path, headless_flg):
+def set_driver(is_headless: bool=False):
     # Chromeドライバーの読み込み
     options = ChromeOptions()
 
     # ヘッドレスモード（画面非表示モード）をの設定
-    if headless_flg == True:
+    if is_headless == True:
         options.add_argument('--headless')
 
     # 起動オプションの設定
@@ -51,20 +54,23 @@ def find_table_target_word(th_elms, td_elms, target:str):
 
 ### main処理
 def main():
-    driver = set_driver("chromedriver.exe", False)
+    driver = set_driver()
     driver.get("https://www.sbisec.co.jp/ETGate/?_ControlID=WPLEThmR001Control&_PageID=DefaultPID&_DataStoreID=DSWPLEThmR001Control&_ActionID=DefaultAID&getFlg=on")
     driver.find_element_by_id("top_stock_sec").send_keys("アフリカ")
     driver.find_element_by_css_selector("[title='株価検索']").click()
-    time.sleep(10)
-    try:
-        # ポップアップを閉じる（seleniumだけではクローズできない）
-        driver.execute_script('document.querySelector(".karte-close").click()')
-        time.sleep(5)
-        # ポップアップを閉じる
-        driver.execute_script('document.querySelector(".karte-close").click()')
-    except:
-        pass
+    time.sleep(5)
 
+    name_elms = driver.find_elements_by_css_selector(".accTbl01 tr td:nth-child(1) p:first-child")
+    price_elms = driver.find_elements_by_css_selector(".accTbl01 tr td:nth-child(3) p")
+    df = pd.DataFrame()
+    for name_elm, price_elm in zip(name_elms, price_elms):
+        df = df.append({
+            "銘柄名": name_elm.text,
+            "現在値": price_elm.text.replace(",", "")
+        }, ignore_index=True)
+    
+    df.to_csv("export.csv", encoding="utf-8_sig")
+    
     # ページ終了まで繰り返し取得
     exp_name_list = []
     exp_copy_list = []
@@ -99,25 +105,6 @@ def main():
             finally:
                 # finallyは成功でもエラーでも必ず実行
                 count+=1
-
-        # 次のページボタンがあればクリックなければ終了
-        next_page = driver.find_elements_by_class_name("iconFont--arrowLeft")
-        if len(next_page) >= 1:
-            next_page_link = next_page[0].get_attribute("href")
-            driver.get(next_page_link)
-        else:
-            log("最終ページです。終了します。")
-            break
-
-    # CSV出力
-    now = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    df = pd.DataFrame({"企業名":exp_name_list,
-                       "キャッチコピー":exp_copy_list,
-                       "ステータス":exp_status_list,
-                       "初年度年収":exp_first_year_fee_list})
-    df.to_csv(EXP_CSV_PATH.format(search_keyword=search_keyword,datetime=
-                                  now), encoding="utf-8-sig")
-    log(f"処理完了 成功件数: {success} 件 / 失敗件数: {fail} 件")
     
 # 直接起動された場合はmain()を起動(モジュールとして呼び出された場合は起動しないようにするため)
 if __name__ == "__main__":

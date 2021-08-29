@@ -1,3 +1,4 @@
+#insta
 import os
 from selenium.webdriver import Chrome, ChromeOptions
 import time
@@ -53,9 +54,6 @@ def find_table_target_word(th_elms, td_elms, target:str):
 
 ### main処理
 def main():
-    # log("処理開始")
-    # search_keyword=input("検索キーワードを入力してください：")
-    # log("検索キーワード:{}".format(search_keyword))
     # driverを起動
     driver = set_driver("chromedriver.exe", False)
     # Webサイトを開く
@@ -68,16 +66,6 @@ def main():
     except Exception:
         error_flg = True
         print('ログインボタン押下時にエラーが発生しました。')
-
-    # try:
-    #     # ポップアップを閉じる（seleniumだけではクローズできない）
-    #     driver.execute_script('document.querySelector(".karte-close").click()')
-    #     time.sleep(5)
-    #     # ポップアップを閉じる
-    #     driver.execute_script('document.querySelector(".karte-close").click()')
-    # except:
-    #     pass
-
         if error_flg is False:
             try:
                 username_input = driver.find_element_by_xpath('//input[@aria-label="電話番号、ユーザーネーム、メールアドレス"]')
@@ -151,8 +139,7 @@ def main():
                        "キャッチコピー":exp_copy_list,
                        "ステータス":exp_status_list,
                        "初年度年収":exp_first_year_fee_list})
-    df.to_csv(EXP_CSV_PATH.format(search_keyword=search_keyword,datetime=
-                                  now), encoding="utf-8-sig")
+    df.to_csv(EXP_CSV_PATH.format(datetime=now), encoding="utf-8-sig")
     log(f"処理完了 成功件数: {success} 件 / 失敗件数: {fail} 件")
     
 # 直接起動された場合はmain()を起動(モジュールとして呼び出された場合は起動しないようにするため)
