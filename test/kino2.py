@@ -54,3 +54,104 @@ plt.ylabel('price',color='grey',size=20) #Y軸の名前
 plt.legend()#名前を表示させる
 
 #ゴールデンクロス＝短期の移動平均線が中期以上の移動平均線を下から上に抜けること（価格が上昇のサイン）⇔デッドクロス
+
+#棒グラフの描画（matplotlibで可視化） 
+plt.figure(figsize=(30,15))
+plt.bar(date,df['Volume'],label='Volume',color='grey')
+plt.legend()
+
+#線グラフと棒グラフを同じグラフの中で２分割
+plt.figure(figsize=(30,15))
+plt.subplot(2,1,1) #分割表示のsubplot 縦方向、横方向、グラフを配置する位置のインデックス
+plt.plot(date,price,label='Close',color='#99b898') 
+plt.plot(date,df['sma01'],label='sma01',color='e84a5f')
+plt.plot(date,df['sma02'],label='sma02',color='#ff847c')
+plt.plot(date,df['sma03'],label='sma03',color='#feceab')
+plt.legend()
+
+plt.subplot(2,1,2)
+plt.bar(date,df['Volume'],label='Volume',color='grey')
+plt.legend()
+
+#日本企業の個別銘柄の株のデータ取得
+#まず東京証券取引所のページにアクセス
+#例：リクルートホールディングスで検索→コード「6098」コピー
+company_code = '6098.jp'
+#df = data.DataReader('6098','stooq') #ポーランドのサイトを使ってデータ取得（コード,データソース）
+df = data.DataReader(company_code,'stooq') 
+df.head()
+df.index.min()
+df.index.max()
+df.index.max()
+df.head()
+df.tail()
+df = df.sort_index() #dfの変数を並び替えして更新（通常のカラムの並びを変える際はsort_valuesデータフレームの要素の並び替え）
+df.head(10)
+#df.index>='2019-06-01 00:00:00'
+
+#日付を絞ってみる(2019-06-01～2020-05-01)
+df = [(df.index>='2019-06-01 00:00:00')&(df.index<='2020-05-01 00:00:00')]
+
+#可視化
+date=df.index
+price=df['Close']
+
+span01=5 
+span02=25
+span03=50
+
+df['sma01'] = price.rolling(window=span01).mean() 
+df['sma02'] = price.rolling(window=span02).mean()
+df['sma03'] = price.rolling(window=span03).mean()
+
+plt.figure(figsize=(30,15))
+plt.subplot(2,1,1)
+
+plt.plot(date,price,label='Close',color='#99b898') 
+plt.plot(date,df['sma01'],label='sma01',color='e84a5f')
+plt.plot(date,df['sma02'],label='sma02',color='#ff847c')
+plt.plot(date,df['sma03'],label='sma03',color='#feceab')
+plt.legend()
+
+plt.subplot(2,1,2)
+plt.bar(date,df['Volume'],label='Volume',color='grey')
+plt.legend()
+
+#ユニクロやGUなどのグループ会社のファーストリテイリング「6502」書き換えられるようにしてみる
+#company_code = '6502.jp'
+#df = [(df.index>='start') & (df.index<='end')]
+#df = data.DataReader(company_code,'stooq') 
+
+#同じコードを使うため、関数にする
+
+def company_stock(start,end,company_code):
+    df = data.DataReader(company_code,'stooq')
+    df = df[(df.index>=start) & (df.index<=end)]
+
+    date=df.index
+    price=df['close']
+
+    span01=5 
+    span02=25
+    span03=50
+
+    df['sma01'] = price.rolling(window=span01).mean() 
+    df['sma02'] = price.rolling(window=span02).mean()
+    df['sma03'] = price.rolling(window=span03).mean()
+
+    plt.figure(figsize=(20,10))
+    plt.subplot(2,1,1)
+
+    plt.plot(date,price,label='Close',color='#99b898') 
+    plt.plot(date,df['sma01'],label='sma01',color='e84a5f')
+    plt.plot(date,df['sma02'],label='sma02',color='#ff847c')
+    plt.plot(date,df['sma03'],label='sma03',color='#feceab')
+    plt.legend()
+
+    plt.subplot(2,1,2)
+    plt.bar(date,df['Volume'],label='Volume',color='grey')
+    plt.legend()
+
+company_stock('2019-06-01','2020-06-01','6502.jp')
+company_stock('2017-01-01','2020-06-01','6502.jp')
+company_stock('2017-01-01','2020-06-01','7203.jp')
