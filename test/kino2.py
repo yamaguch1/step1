@@ -2,7 +2,7 @@ from pandas_datareader import data #pip install pandas_datareader このライ�
 import pandas as pd                #データ解析を支援、集計や加工など
 import matplotlib.pyplot as plt    #パイソンのグラフを書く
 import numpy as np                 
-%matplotlib inlnen
+# %matplotlib inlnen
 #pd.core.common.is_list_like = pd.api.types.is_list_like
 
 start = '2019-06-01' #取得する日

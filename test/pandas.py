@@ -44,3 +44,4 @@ frm = browser.find_element_by_xpath("/html/body/div[1]/div[3]/div/main/article/d
 time.sleep(1)
 frm.click()
 print("ダウンロードボタンをクリック")
+quit()
