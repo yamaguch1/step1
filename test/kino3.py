@@ -1,9 +1,31 @@
 from pandas_datareader import data #pip install pandas_datareader このライブラリは日経平均株価やナスダック、日本の個別銘柄のデータを取得可能
 import pandas as pd                #データ解析を支援、集計や加工など
 import matplotlib.pyplot as plt    #パイソンのグラフを書く
-import numpy as np                 
+import numpy as np           
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver import Chrome, ChromeOptions
+
 #%matplotlib inlnen
 #pd.core.common.is_list_like = pd.api.types.is_list_like
+
+def set_driver(driver_path, headless_flg):
+    # Chromeドライバーの読み込み
+    options = ChromeOptions()
+
+    # ヘッドレスモード（画面非表示モード）をの設定
+    if headless_flg == True:
+        options.add_argument('--headless')
+
+    # 起動オプションの設定
+    options.add_argument(
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36')
+    # options.add_argument('log-level=3')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--ignore-ssl-errors')
+    options.add_argument('--incognito')          # シークレットモードの設定を付与
+
+    # ChromeのWebDriverオブジェクトを作成する。
+    return Chrome(ChromeDriverManager().install(), options=options)
 
 start = '2019-06-01' #取得する日
 end = '2020-06-01'   #取得する最後の日

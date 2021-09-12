@@ -1,22 +1,22 @@
-from pandas_datareader import data #pip install pandas_datareader このライブラリは日経平均株価やナスダック、日本の個別銘柄のデータを取得可能
-import pandas as pd                #データ解析を支援、集計や加工など
-import matplotlib.pyplot as plt    #パイソンのグラフを書く
+from pandas_datareader import data 
+import pandas as pd                
+import matplotlib.pyplot as plt    
 import numpy as np                 
 # %matplotlib inlnen
 #pd.core.common.is_list_like = pd.api.types.is_list_like
 
-start = '2019-06-01' #取得する日
-end = '2020-06-01'   #取得する最後の日
+start = '2019-06-01' 
+end = '2020-06-01'   
 
-df = data.DataReader('^N225','yahoo',start,end)   #取得したいティッカーシンボル,とデータソースの名前←これでdfという変数にpandasのデータフレームとして日経平均のデータが格納される
-df.head(10) #headで上位10を表示
+df = data.DataReader('^N225','yahoo',start,end)   
 
-df.dtypes
+df.head(10) 
 
-df.index #DatetimeIndex時系列データとして扱える可視化にも便利
+# df.dtypes
 
-date = df.index #変数に代入
-price = df['Adj Close']
+df.index 
+date = df.index 
+price = df['Adj Close'] 
 
 plt.plot(date,price) #線グラフの描画（matplotlibで可視化） 
 #X軸にdate,Y軸にprice
@@ -88,70 +88,3 @@ df.tail()
 df = df.sort_index() #dfの変数を並び替えして更新（通常のカラムの並びを変える際はsort_valuesデータフレームの要素の並び替え）
 df.head(10)
 #df.index>='2019-06-01 00:00:00'
-
-#日付を絞ってみる(2019-06-01～2020-05-01)
-df = [(df.index>='2019-06-01 00:00:00')&(df.index<='2020-05-01 00:00:00')]
-
-#可視化
-date=df.index
-price=df['Close']
-
-span01=5 
-span02=25
-span03=50
-
-df['sma01'] = price.rolling(window=span01).mean() 
-df['sma02'] = price.rolling(window=span02).mean()
-df['sma03'] = price.rolling(window=span03).mean()
-
-plt.figure(figsize=(30,15))
-plt.subplot(2,1,1)
-
-plt.plot(date,price,label='Close',color='#99b898') 
-plt.plot(date,df['sma01'],label='sma01',color='e84a5f')
-plt.plot(date,df['sma02'],label='sma02',color='#ff847c')
-plt.plot(date,df['sma03'],label='sma03',color='#feceab')
-plt.legend()
-
-plt.subplot(2,1,2)
-plt.bar(date,df['Volume'],label='Volume',color='grey')
-plt.legend()
-
-#ユニクロやGUなどのグループ会社のファーストリテイリング「6502」書き換えられるようにしてみる
-#company_code = '6502.jp'
-#df = [(df.index>='start') & (df.index<='end')]
-#df = data.DataReader(company_code,'stooq') 
-
-#同じコードを使うため、関数にする
-
-def company_stock(start,end,company_code):
-    df = data.DataReader(company_code,'stooq')
-    df = df[(df.index>=start) & (df.index<=end)]
-
-    date=df.index
-    price=df['close']
-
-    span01=5 
-    span02=25
-    span03=50
-
-    df['sma01'] = price.rolling(window=span01).mean() 
-    df['sma02'] = price.rolling(window=span02).mean()
-    df['sma03'] = price.rolling(window=span03).mean()
-
-    plt.figure(figsize=(20,10))
-    plt.subplot(2,1,1)
-
-    plt.plot(date,price,label='Close',color='#99b898') 
-    plt.plot(date,df['sma01'],label='sma01',color='e84a5f')
-    plt.plot(date,df['sma02'],label='sma02',color='#ff847c')
-    plt.plot(date,df['sma03'],label='sma03',color='#feceab')
-    plt.legend()
-
-    plt.subplot(2,1,2)
-    plt.bar(date,df['Volume'],label='Volume',color='grey')
-    plt.legend()
-
-company_stock('2019-06-01','2020-06-01','6502.jp')
-company_stock('2017-01-01','2020-06-01','6502.jp')
-company_stock('2017-01-01','2020-06-01','7203.jp')
