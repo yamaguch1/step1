@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt    #パイソンのグラフを書く
 import numpy as np           
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver import Chrome, ChromeOptions
+from webdriver_manager.chrome import ChromeDriverManager
+driver = Chrome(ChromeDriverManager().install())
 
 #%matplotlib inlnen
 #pd.core.common.is_list_like = pd.api.types.is_list_like

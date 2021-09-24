@@ -12,39 +12,31 @@ df = data.DataReader('^N225','yahoo',start,end)
 
 df.head(10) 
 
-# df.dtypes
-
-df.index 
 date = df.index 
 price = df['Adj Close'] 
 
-plt.plot(date,price) #線グラフの描画（matplotlibで可視化） 
-#X軸にdate,Y軸にprice
+plt.plot(date,price) 
 plt.figure(figsize=(30,10))
-#グラフのサイズが小さいので横の長さ30、縦の長さ10
-plt.plot(date,price,label='Nikkei225') #線グラフに名前を付ける＝凡例
-plt.title('N225',color='blue',backgroundcolor='white',size=40,loc='center') #タイトルをつける
-plt.xlabel('date',color='blue',size=30) #X軸の名前
-plt.ylabel('price',color='blue',size=40) #Y軸の名前
-plt.legend()#名前を表示させる
+plt.plot(date,price,label='Nikkei225')
+plt.title('N225',color='blue',backgroundcolor='white',size=40,loc='center') 
+plt.xlabel('date',color='blue',size=30) 
+plt.ylabel('price',color='blue',size=40) 
+plt.legend()
 
-#単純移動平均
-span01=5 #移動平均の期間（5日間の移動平均）
+span01=5 
 span02=25
 span03=50
 
-df['sma01'] = price.rolling(window=span01).mean() #rollingメソッドで窓関数を適用できる、サンプリングの間隔を指定する
-#単純移動平均の略称sma01というカラム名（）内は移動平均の日数、meanは平均（maxは最大値を取得、minは最小値）
+df['sma01'] = price.rolling(window=span01).mean() 
 df['sma02'] = price.rolling(window=span02).mean()
 df['sma03'] = price.rolling(window=span03).mean()
 
-pd.set_option('display.max_rows',None) #行の省略を防ぐ
-df.head(100) #上位100
+pd.set_option('display.max_rows',None) 
+df.head(100) 
 
-#配色の参考サイトhttp://colorhunt.co/palette/184189
 plt.figure(figsize=(30,10))
 plt.plot(date,price,label='Nikkei225',color='#99b898') #線グラフに名前を付ける＝凡例
-plt.plot(date,df['sma01'],label='sma01',color='e84a5f')
+plt.plot(date,df['sma01'],label='sma01',color='#E84A5F')
 plt.plot(date,df['sma02'],label='sma02',color='#ff847c')
 plt.plot(date,df['sma03'],label='sma03',color='#feceab')
 
@@ -52,8 +44,6 @@ plt.title('N225',color='white',backgroundcolor='grey',size=30,loc='center') #タ
 plt.xlabel('date',color='grey',size=20) #X軸の名前
 plt.ylabel('price',color='grey',size=20) #Y軸の名前
 plt.legend()#名前を表示させる
-
-#ゴールデンクロス＝短期の移動平均線が中期以上の移動平均線を下から上に抜けること（価格が上昇のサイン）⇔デッドクロス
 
 #棒グラフの描画（matplotlibで可視化） 
 plt.figure(figsize=(30,15))
@@ -88,3 +78,5 @@ df.tail()
 df = df.sort_index() #dfの変数を並び替えして更新（通常のカラムの並びを変える際はsort_valuesデータフレームの要素の並び替え）
 df.head(10)
 #df.index>='2019-06-01 00:00:00'
+
+plt.show() 
